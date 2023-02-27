@@ -1,6 +1,4 @@
-const path = require('path');
-
-const rootDir = require('../util/path');
+const path = require('path')
 
 const express = require('express');
 
