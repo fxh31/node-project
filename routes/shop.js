@@ -12,7 +12,7 @@ router.get('/products', shopController.getProducts);
 
 // 设置路由的动态参数:productId（用：后定义）
 router.get('/products/:productId', shopController.getProduct);
-
+ 
 router.get('/cart', shopController.getCart);
 
 router.post('/cart', shopController.postCart);
