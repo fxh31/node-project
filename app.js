@@ -3,11 +3,17 @@ const path = require('path');
 const express =  require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
 const app = express();
+const store = new MongoDBStore({
+  uri: 'mongodb+srv://fxh:KVWwJt80mLTzyXBY@cluster0.mnle1m2.mongodb.net/shop',
+  collection: 'sessions'
+});
 
 app.engine('ejs', require('ejs').__express);
 app.set('view engine', 'ejs'); // 设置模板引擎
@@ -19,15 +25,26 @@ const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'my secret',
+  resave: false,
+  saveUninitialized: false,
+  // cookie: {}
+  store: store
+}))
 
-app.use((req, res, next) => { // 只有在传入请求的时候才会执行的中间件
-  User.findById('63fd681fd9f318d46a9e3863')
-    .then(user => {
+app.use((req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
+  .then(user => {
       req.user = user;
       next();
     })
     .catch(err => console.log(err));
-})
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
