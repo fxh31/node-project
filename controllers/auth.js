@@ -1,4 +1,6 @@
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 const User = require('../models/user');
 
@@ -11,7 +13,7 @@ exports.getLogin = (req, res, next) => {
   }
   res.render('auth/login', {
     path: '/login',
-    pageTitle: 'Login',
+    pageTitle: 'Login', 
     errorMessage: message
   });
 };
